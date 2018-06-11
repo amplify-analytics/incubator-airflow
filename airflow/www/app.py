@@ -142,6 +142,7 @@ def create_app(config=None, testing=False):
 
         @app.before_request
         def enforceHttpsInHeroku():
+            logging.debug(f"Request Headers: {request.headers}")
             if request.headers.get('X-Forwarded-Proto') == 'http':
                 url = request.url.replace('http://', 'https://', 1)
                 return redirect(url, code=301)
