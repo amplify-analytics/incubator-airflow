@@ -35,6 +35,7 @@ from airflow import configuration
 
 def create_app(config=None, testing=False):
     app = Flask(__name__)
+    sslify = SSLify(app)
     app.secret_key = configuration.get('webserver', 'SECRET_KEY')
     app.config['LOGIN_DISABLED'] = not configuration.getboolean('webserver', 'AUTHENTICATE')
 
@@ -159,5 +160,5 @@ app = None
 def cached_app(config=None):
     global app
     if not app:
-        app = SSLify(create_app(config))
+        app = create_app(config)
     return app
