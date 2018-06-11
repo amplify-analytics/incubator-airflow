@@ -56,13 +56,6 @@ def create_app(config=None, testing=False):
     log_format = airflow.settings.LOG_FORMAT_WITH_PID
     airflow.settings.configure_logging(log_format=log_format)
 
-    def enforceHttpsInHeroku():
-        logging.debug(f"Request Headers: {request.headers}")
-        if request.headers.get('X-Forwarded-Proto') == 'http':
-            url = request.url.replace('http://', 'https://', 1)
-            return redirect(url, code=301)
-    app.before_request(enforceHttpsInHeroku)
-
     with app.app_context():
         from airflow.www import views
 
