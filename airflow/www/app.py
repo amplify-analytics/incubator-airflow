@@ -19,6 +19,7 @@ import six
 from flask import Flask
 from flask_admin import Admin, base
 from flask_cache import Cache
+from flask_sslify import SSLify
 from flask_wtf.csrf import CsrfProtect
 csrf = CsrfProtect()
 
@@ -158,5 +159,5 @@ app = None
 def cached_app(config=None):
     global app
     if not app:
-        app = create_app(config)
+        app = SSLify(create_app(config))
     return app

@@ -205,6 +205,7 @@ def do_setup():
             'flask-admin==1.4.1',
             'flask-cache>=0.13.1, <0.14',
             'flask-login==0.2.11',
+            'Flask-SSLify',
             'flask-swagger==0.2.13',
             'flask-wtf==0.14',
             'funcsigs==1.0.0',
