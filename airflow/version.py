@@ -13,4 +13,4 @@
 # limitations under the License.
 #
 
-version = '1.8.2.1'
+version = '1.8.2.2'
