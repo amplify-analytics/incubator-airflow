@@ -56,6 +56,13 @@ def create_app(config=None, testing=False):
     log_format = airflow.settings.LOG_FORMAT_WITH_PID
     airflow.settings.configure_logging(log_format=log_format)
 
+    def enforceHttpsInHeroku():
+        logging.debug(f"Request Headers: {request.headers}")
+        if request.headers.get('X-Forwarded-Proto') == 'http':
+            url = request.url.replace('http://', 'https://', 1)
+            return redirect(url, code=301)
+    app.before_request(enforceHttpsInHeroku)
+
     with app.app_context():
         from airflow.www import views
 
@@ -139,13 +146,6 @@ def create_app(config=None, testing=False):
                 importlib.reload(e)
 
         app.register_blueprint(e.api_experimental, url_prefix='/api/experimental')
-
-        @app.before_request
-        def enforceHttpsInHeroku():
-            logging.debug(f"Request Headers: {request.headers}")
-            if request.headers.get('X-Forwarded-Proto') == 'http':
-                url = request.url.replace('http://', 'https://', 1)
-                return redirect(url, code=301)
 
         @app.context_processor
         def jinja_globals():
