@@ -16,10 +16,9 @@ import logging
 import socket
 import six
 
-from flask import Flask
+from flask import Flask, request, redirect
 from flask_admin import Admin, base
 from flask_cache import Cache
-from flask_sslify import SSLify
 from flask_wtf.csrf import CsrfProtect
 csrf = CsrfProtect()
 
@@ -35,7 +34,6 @@ from airflow import configuration
 
 def create_app(config=None, testing=False):
     app = Flask(__name__)
-    sslify = SSLify(app)
     app.secret_key = configuration.get('webserver', 'SECRET_KEY')
     app.config['LOGIN_DISABLED'] = not configuration.getboolean('webserver', 'AUTHENTICATE')
 
@@ -141,6 +139,12 @@ def create_app(config=None, testing=False):
                 importlib.reload(e)
 
         app.register_blueprint(e.api_experimental, url_prefix='/api/experimental')
+
+        @app.before_request
+        def enforceHttpsInHeroku():
+            if request.headers.get('X-Forwarded-Proto') == 'http':
+                url = request.url.replace('http://', 'https://', 1)
+                return redirect(url, code=301)
 
         @app.context_processor
         def jinja_globals():
