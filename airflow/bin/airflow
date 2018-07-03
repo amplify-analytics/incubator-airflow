@@ -28,8 +28,8 @@ if __name__ == "__main__":
             from raven import Client
 
             client = Client(os.environ.get("RAVEN_DSN"))
-        except:
-            print("Failed to initialize raven Sentry client")
+        except Exception as e:
+            print(f"Failed to initialize raven Sentry client: {e}")
 
     parser = CLIFactory.get_parser()
     args = parser.parse_args()
