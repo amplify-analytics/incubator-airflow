@@ -23,11 +23,15 @@ if __name__ == "__main__":
         os.environ["KRB5CCNAME"] = configuration.get("kerberos", "ccache")
         os.environ["KRB5_KTNAME"] = configuration.get("kerberos", "keytab")
 
-    if os.environ.get("ENABLE_SENTRY"):
+    if os.environ.get("ENABLE_SENTRY", "False") == "True":
         try:
             from raven import Client
 
-            client = Client(os.environ.get("RAVEN_DSN"))
+            client = Client(
+                dsn=os.environ.get("RAVEN_DSN"),
+                environment=os.environ.get("SENTRY_ENVIRONMENT", "production"),
+                release=os.environ.get("HEROKU_SLUG_COMMIT"),
+            )
         except Exception as e:
             print(f"Failed to initialize raven Sentry client: {e}")
 
