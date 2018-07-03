@@ -17,11 +17,19 @@ import os
 from airflow import configuration
 from airflow.bin.cli import CLIFactory
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
-    if configuration.get("core", "security") == 'kerberos':
-        os.environ['KRB5CCNAME'] = configuration.get('kerberos', 'ccache')
-        os.environ['KRB5_KTNAME'] = configuration.get('kerberos', 'keytab')
+    if configuration.get("core", "security") == "kerberos":
+        os.environ["KRB5CCNAME"] = configuration.get("kerberos", "ccache")
+        os.environ["KRB5_KTNAME"] = configuration.get("kerberos", "keytab")
+
+    if os.environ.get("ENABLE_SENTRY"):
+        try:
+            from raven import Client
+
+            client = Client(os.environ.get("RAVEN_DSN"))
+        except:
+            print("Failed to initialize raven Sentry client")
 
     parser = CLIFactory.get_parser()
     args = parser.parse_args()
